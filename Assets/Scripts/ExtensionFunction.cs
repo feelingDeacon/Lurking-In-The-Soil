@@ -9,12 +9,12 @@ public static class ExtensionFunction
         return Random.value <= val;
     }
 
-    public static int GetLeftDirection(int currDir)
+    public static float GetLeftDirection(this float currDir)
     {
-        return (currDir - 1) % 8;
+        return (currDir - 1 + 8) % 8;
     }
     
-    public static int GetRightDirection(int currDir)
+    public static float GetRightDirection(this float currDir)
     {
         return (currDir + 1) % 8;
     }

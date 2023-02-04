@@ -103,11 +103,10 @@ MonoBehaviour:
   x: 0
   y: 0
   maxHealth: 2
-  minExtendInterval: 1
-  maxExtendInterval: 2
+  minExtendInterval: 0.25
+  maxExtendInterval: 1
   isSource: 0
-  prevBlock:
-  - {fileID: 0}
+  prevBlocks: []
   nextBlock: {fileID: 0}
   health: 0
   existedTime: 0

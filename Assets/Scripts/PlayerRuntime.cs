@@ -5,9 +5,13 @@ using UnityEngine;
 public class PlayerRuntime : MonoBehaviour
 {
     public float moveSpeed = 5;
+    public float attackRadius = 2.5f;
+    public int attackDamage = 1;
     public Rigidbody2D rb;
     public Animator animator;
     public bool isAttacking;
+    public bool _attacked;
+    public Vector3 playerAttackDir;
     
     private static PlayerRuntime _instance;
 
@@ -24,6 +28,12 @@ public class PlayerRuntime : MonoBehaviour
         }
     }
 
+    public void InitPlayer()
+    {
+        isAttacking = false;
+        _attacked = false;
+    }
+    
     public void UpdatePlayer()
     {
         if (!isAttacking)
@@ -62,17 +72,27 @@ public class PlayerRuntime : MonoBehaviour
         if (Input.GetButtonDown("Fire1"))
         {
             Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            Vector3 playerAttackDir = (mouseWorldPos - transform.position).RemoveZ().normalized;
+            playerAttackDir = (mouseWorldPos - transform.position).RemoveZ().normalized;
             animator.SetFloat("AttackHorizontal", playerAttackDir.x);
             animator.SetFloat("AttackVertical", playerAttackDir.y);
             animator.SetTrigger("Attack");
             isAttacking = true;
+            _attacked = false;
         }
     }
 
     public void Attack()
     {
-        
+        if (_attacked) return;
+
+        _attacked = true;
+        Collider2D[] hitTargets = Physics2D.OverlapCircleAll(transform.position + playerAttackDir * 3,
+            attackRadius, 1 << 13);
+        foreach (var hitTarget in hitTargets)
+        {
+            RootBlock root = hitTarget.GetComponent<RootBlock>();
+            root.GetHurt(attackDamage);
+        }
     }
     
     public void AttackEnd()

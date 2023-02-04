@@ -45,13 +45,13 @@ public class EnvironmentManager : MonoBehaviour
             tilemap.Add(currCol);
         }
         
-        for (int i = 0; i < widthSize; i++)
-        {
-            for (int j = 0; j < heightSize; j++)
-            {
-                Block newBlock = CreateBlockAtIndex(BlockType.Empty, i, j);
-            }
-        }
+        // for (int i = 0; i < widthSize; i++)
+        // {
+        //     for (int j = 0; j < heightSize; j++)
+        //     {
+        //         Block newBlock = CreateBlockAtIndex(BlockType.Empty, i, j);
+        //     }
+        // }
     }
 
     public Block CreateBlockAtIndex(BlockType type, int x, int y)
@@ -70,15 +70,25 @@ public class EnvironmentManager : MonoBehaviour
         }
         
         Block newBlock = ObjectPool.Instance.CreateObject(blockGameObjectId, transform,
-            BlockIndexToLocalPos(x, y)).GetComponent<Block>();
+            BlockIndexToWorldPos(x, y)).GetComponent<Block>();
         newBlock.InitBlock(x, y);
         
         SetBlock(newBlock, x, y);
 
         return newBlock;
     }
+
+    public void RemoveBlockAtIndex(int x, int y)
+    {
+        if (tilemap[x][y])
+        {
+            tilemap[x][y].DestroyBlock();
+        }
+
+        tilemap[x][y] = null;
+    }
     
-    public Vector3 BlockIndexToLocalPos(int x, int y)
+    public Vector3 BlockIndexToWorldPos(int x, int y)
     {
         return new Vector3(x + centerOffsetX, y + centerOffsetY, 0);
     }
@@ -112,6 +122,22 @@ public class EnvironmentManager : MonoBehaviour
             return true;
         }
     }
+
+    public bool IsBlockIndexMatchType(BlockType blockType, int x, int y)
+    {
+        if (x < 0 || x >= widthSize || y < 0 || y >= heightSize)
+        {
+            return false;
+        }
+        if (tilemap[x][y])
+        {
+            return tilemap[x][y].blockType == blockType;
+        }
+        else
+        {
+            return blockType == BlockType.Empty;
+        }
+    }
     
     public void SetBlock(Block newBlock, int x, int y)
     {
@@ -120,5 +146,10 @@ public class EnvironmentManager : MonoBehaviour
             tilemap[x][y].DestroyBlock();
         }
         tilemap[x][y] = newBlock;
+    }
+
+    public Block GetBlock(int x, int y)
+    {
+        return tilemap[x][y];
     }
 }

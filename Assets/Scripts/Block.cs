@@ -27,6 +27,10 @@ public abstract class Block : MonoBehaviour
 
     public virtual void DestroyBlock()
     {
-        Destroy(gameObject);
+        if (EnvironmentManager.Instance.tilemap[x][y] == this)
+        {
+            EnvironmentManager.Instance.tilemap[x][y] = null;
+        }
+        ObjectPool.Instance.DestroyObject(gameObject);
     }
 }
