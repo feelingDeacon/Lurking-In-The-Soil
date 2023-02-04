@@ -6,6 +6,8 @@ public enum BlockType
 {
     Empty,
     Root,
+    FastRoot,
+    Nexus,
 }
 public abstract class Block : MonoBehaviour
 {

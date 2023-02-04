@@ -11,29 +11,23 @@ public static class ExtensionFunction
 
     public static Vector2 GetLeftDirection(this Vector2 currDir)
     {
-        float radians = -45 * Mathf.Deg2Rad;
-        float sin = Mathf.Sin(radians);
-        float cos = Mathf.Cos(radians);
-         
-        float tx = currDir.x;
-        float ty = currDir.y;
- 
-        return new Vector2(cos * tx - sin * ty, sin * tx + cos * ty);
-        // return (currDir - 1 + 8) % 8;
+        return currDir.Rotate(-45);
     }
     
     public static Vector2 GetRightDirection(this Vector2 currDir)
     {
-        float radians = 45 * Mathf.Deg2Rad;
+        return currDir.Rotate(45);
+    }
+
+    public static Vector2 Rotate(this Vector2 currDir, float degree)
+    {
+        float radians = degree * Mathf.Deg2Rad;
         float sin = Mathf.Sin(radians);
         float cos = Mathf.Cos(radians);
          
         float tx = currDir.x;
         float ty = currDir.y;
- 
         return new Vector2(cos * tx - sin * ty, sin * tx + cos * ty);
-
-        // return (currDir + 1) % 8;
     }
 
     public static void DirectionToIndex(Vector2 dir, out int resX, out int resY)

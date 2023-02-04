@@ -7,6 +7,7 @@ public enum GameObjectId
 {
     EmptyBlock,
     RootBlock,
+    NexusBlock,
 }
 
 public class ObjectPool : MonoBehaviour

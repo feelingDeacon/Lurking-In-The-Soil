@@ -103,16 +103,28 @@ MonoBehaviour:
   x: 0
   y: 0
   maxHealth: 2
-  minExtendInterval: 0.25
-  maxExtendInterval: 1
+  minExtendInterval: 0.05
+  maxExtendInterval: 0.25
+  sinLength: 0
+  sinHeight: 0
+  minBranchThreshold: 10
+  maxBranchThreshold: 25
+  maxScale: 3.5
   isSource: 0
-  prevBlocks: []
-  nextBlock: {fileID: 0}
+  parent: {fileID: 0}
+  children: []
   health: 0
-  existedTime: 0
-  isDead: 0
-  currDir: 0
+  currLength: 0
+  currDir: {x: 0, y: 0}
+  currSin: 0
   nextExtendTime: 0
+  nextBranchLength: 0
+  currBranchCount: 0
+  spawnTime: 0
+  nextThickenTime: 0
+  willBranch: 0
+  willThicken: 0
+  currScale: 0
 --- !u!61 &5758129231707724111
 BoxCollider2D:
   m_ObjectHideFlags: 0

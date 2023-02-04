@@ -20,10 +20,8 @@ public class EnvironmentManager : MonoBehaviour
         }
     }
 
-    public int widthSize = 120;
-    public int heightSize = 120;
-    private float centerOffsetX => - widthSize / 2 + 0.5f;
-    private float centerOffsetY => - heightSize / 2 + 0.5f;
+    private float centerOffsetX => - GameConstants.MapWidth / 2 + 0.5f;
+    private float centerOffsetY => - GameConstants.MapHeight / 2 + 0.5f;
 
     public List<List<Block>> tilemap;
     
@@ -35,10 +33,10 @@ public class EnvironmentManager : MonoBehaviour
     private void SpawnGrid()
     {
         tilemap = new List<List<Block>>();
-        for (int i = 0; i < widthSize; i++)
+        for (int i = 0; i < GameConstants.MapWidth; i++)
         {
             List<Block> currCol = new List<Block>();
-            for (int j = 0; j < heightSize; j++)
+            for (int j = 0; j < GameConstants.MapHeight; j++)
             {
                 currCol.Add(null);
             }
@@ -64,6 +62,9 @@ public class EnvironmentManager : MonoBehaviour
                 break;
             case BlockType.Root:
                 blockGameObjectId = GameObjectId.RootBlock;
+                break;
+            case BlockType.Nexus:
+                blockGameObjectId = GameObjectId.NexusBlock;
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(type), type, null);
@@ -95,9 +96,9 @@ public class EnvironmentManager : MonoBehaviour
 
     public void UpdateManager()
     {
-        for (int x = 0; x < widthSize; x++)
+        for (int x = 0; x < GameConstants.MapWidth; x++)
         {
-            for (int y = 0; y < heightSize; y++)
+            for (int y = 0; y < GameConstants.MapHeight; y++)
             {
                 if (tilemap[x][y])
                 {
@@ -109,7 +110,7 @@ public class EnvironmentManager : MonoBehaviour
 
     public bool IsBlockIndexEmpty(int x, int y)
     {
-        if (x < 0 || x >= widthSize || y < 0 || y >= heightSize)
+        if (x < 0 || x >= GameConstants.MapWidth || y < 0 || y >= GameConstants.MapHeight)
         {
             return false;
         }
@@ -125,7 +126,7 @@ public class EnvironmentManager : MonoBehaviour
 
     public bool IsBlockIndexMatchType(BlockType blockType, int x, int y)
     {
-        if (x < 0 || x >= widthSize || y < 0 || y >= heightSize)
+        if (x < 0 || x >= GameConstants.MapWidth || y < 0 || y >= GameConstants.MapHeight)
         {
             return false;
         }
@@ -137,6 +138,24 @@ public class EnvironmentManager : MonoBehaviour
         {
             return blockType == BlockType.Empty;
         }
+    }
+
+    public bool HasSurroundBlockMatchType(BlockType blockType, int x, int y)
+    {
+        for (int i = x - 1; i <= x + 1; i++)
+        {
+            for (int j = y - 1; j <= y + 1; j++)
+            {
+                if (i == x && j == y) continue;
+                
+                if (IsBlockIndexMatchType(blockType, i, j))
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
     
     public void SetBlock(Block newBlock, int x, int y)
