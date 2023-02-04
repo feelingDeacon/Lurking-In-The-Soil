@@ -16,7 +16,7 @@ public class RootBlock : Block
     public int health;
     public int existedTime;
     public bool isDead;
-    public float currDir; // 0:up, 0-7 clockwise
+    public Vector2 currDir; // 0:up, 0-7 clockwise
     public float nextExtendTime;
 
     public override void InitBlock(int xPos, int yPos)
@@ -32,7 +32,7 @@ public class RootBlock : Block
         UpdateColor();
     }
     
-    public void SetData(RootBlock prev, RootBlock next, float direction, bool isSourceBlock = false)
+    public void SetData(RootBlock prev, RootBlock next, Vector2 direction, bool isSourceBlock = false)
     {
         if (prev)
         {
@@ -101,6 +101,7 @@ public class RootBlock : Block
         base.DestroyBlock();
     }
 
+    private int _attemptSpawnIndexX, _attemptSpawnIndexY;
     private void ExtendRoot()
     {
         if (nextBlock) return;
@@ -108,6 +109,8 @@ public class RootBlock : Block
         nextExtendTime = Time.time + Random.Range(minExtendInterval, maxExtendInterval);
 
         GetBlockIndexOfDirection(currDir, out int newX, out int newY);
+        _attemptSpawnIndexX = newX;
+        _attemptSpawnIndexY = newY;
         
         if (EnvironmentManager.Instance.IsBlockIndexEmpty(newX, newY))
         {
@@ -166,45 +169,38 @@ public class RootBlock : Block
         renderer.color = rendererColor;
     }
     
-    private void GetBlockIndexOfDirection(float dir, out int resX, out int resY)
+    private void GetBlockIndexOfDirection(Vector2 dir, out int resX, out int resY)
     {
-        resX = 0;
-        resY = 0;
-        int intDir = (int)Math.Round(dir);
-        switch (intDir)
+        ExtensionFunction.DirectionToIndex(dir, out int offsetX, out int offsetY);
+        resX = x + offsetX;
+        resY = y + offsetY;
+    }
+    
+    void OnDrawGizmosSelected()
+    {
+        if (nextBlock)
         {
-            case 0:
-                resX = x;
-                resY = y + 1;
-                break;
-            case 1:
-                resX = x + 1;
-                resY = y + 1;
-                break;
-            case 2:
-                resX = x + 1;
-                resY = y;
-                break;
-            case 3:
-                resX = x + 1;
-                resY = y - 1;
-                break;
-            case 4:
-                resX = x;
-                resY = y - 1;
-                break;
-            case 5:
-                resX = x - 1;
-                resY = y - 1;
-                break;
-            case 6:
-                resX = x - 1;
-                resY = y;
-                break;
-            case 7:
-                resX = x - 1;
-                resY = y + 1;
-                break;
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawLine(transform.position, nextBlock.transform.position);
         }
+        else
+        {
+            Gizmos.color = Color.magenta;
+            Gizmos.DrawLine(transform.position, EnvironmentManager.Instance.BlockIndexToWorldPos(
+                _attemptSpawnIndexX, _attemptSpawnIndexY));
+        }
+
+        if (prevBlocks.Count > 0)
+        {
+            Gizmos.color = Color.cyan;
+            foreach (var prevBlock in prevBlocks)
+            {
+                Gizmos.DrawLine(transform.position, prevBlock.transform.position);
+            }
+        }
+        
+        Gizmos.color = Color.white;
+        
+        Gizmos.DrawLine(transform.position, transform.position + new Vector3(currDir.x, currDir.y));
     }
 }

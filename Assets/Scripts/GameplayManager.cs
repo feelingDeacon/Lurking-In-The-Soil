@@ -56,7 +56,8 @@ public class GameplayManager : MonoBehaviour
     
     public void CreateNewRoot()
     {
-        int x, y, dir;
+        int x, y;
+        Vector2 dir;
         do
         {
             if (0.5f.ChanceToBool())
@@ -66,12 +67,14 @@ public class GameplayManager : MonoBehaviour
                 if (0.5f.ChanceToBool())
                 {
                     x = 0;
-                    dir = 2;
+                    // dir = 2;
+                    dir = new Vector2(1, 0);
                 }
                 else
                 {
                     x = EnvironmentManager.Instance.widthSize - 1;
-                    dir = 6;
+                    // dir = 6;
+                    dir = new Vector2(-1, 0);
                 }
             }
             else
@@ -81,12 +84,14 @@ public class GameplayManager : MonoBehaviour
                 if (0.5f.ChanceToBool())
                 {
                     y = 0;
-                    dir = 0;
+                    // dir = 0;
+                    dir = new Vector2(0, 1);
                 }
                 else
                 {
                     y = EnvironmentManager.Instance.heightSize - 1;
-                    dir = 4;
+                    // dir = 4;
+                    dir = new Vector2(0, -1);
                 }
             }
         } while (!EnvironmentManager.Instance.IsBlockIndexEmpty(x, y));
