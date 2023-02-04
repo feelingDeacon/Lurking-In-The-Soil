@@ -71,7 +71,7 @@ public class EnvironmentManager : MonoBehaviour
         
         Block newBlock = ObjectPool.Instance.CreateObject(blockGameObjectId, transform,
             BlockIndexToLocalPos(x, y)).GetComponent<Block>();
-        newBlock.InitBlock();
+        newBlock.InitBlock(x, y);
         
         SetBlock(newBlock, x, y);
 
@@ -99,6 +99,10 @@ public class EnvironmentManager : MonoBehaviour
 
     public bool IsBlockIndexEmpty(int x, int y)
     {
+        if (x < 0 || x >= widthSize || y < 0 || y >= heightSize)
+        {
+            return false;
+        }
         if (tilemap[x][y])
         {
             return tilemap[x][y].blockType == BlockType.Empty;

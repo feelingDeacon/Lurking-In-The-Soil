@@ -59,8 +59,12 @@ public class PlayerRuntime : MonoBehaviour
 
     public void UpdateAttackControl()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetButtonDown("Fire1"))
         {
+            Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Vector3 playerAttackDir = (mouseWorldPos - transform.position).RemoveZ().normalized;
+            animator.SetFloat("AttackHorizontal", playerAttackDir.x);
+            animator.SetFloat("AttackVertical", playerAttackDir.y);
             animator.SetTrigger("Attack");
             isAttacking = true;
         }

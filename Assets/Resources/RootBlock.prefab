@@ -11,7 +11,8 @@ GameObject:
   - component: {fileID: 3231347368032355808}
   - component: {fileID: 2106652434902904523}
   - component: {fileID: 1607772156088381802}
-  m_Layer: 0
+  - component: {fileID: 5758129231707724111}
+  m_Layer: 13
   m_Name: RootBlock
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -98,9 +99,44 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   renderer: {fileID: 2106652434902904523}
-  prevBlock: {fileID: 0}
+  blockType: 1
+  x: 0
+  y: 0
+  maxHealth: 2
+  minExtendInterval: 1
+  maxExtendInterval: 2
+  isSource: 0
+  prevBlock:
+  - {fileID: 0}
   nextBlock: {fileID: 0}
   health: 0
-  maxHealth: 2
   existedTime: 0
   isDead: 0
+  currDir: 0
+  nextExtendTime: 0
+--- !u!61 &5758129231707724111
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1325118976616793881}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1, y: 1}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1}
+  m_EdgeRadius: 0

@@ -56,7 +56,7 @@ public class GameplayManager : MonoBehaviour
     
     public void CreateNewRoot()
     {
-        int x, y;
+        int x, y, dir;
         do
         {
             if (0.5f.ChanceToBool())
@@ -66,10 +66,12 @@ public class GameplayManager : MonoBehaviour
                 if (0.5f.ChanceToBool())
                 {
                     x = 0;
+                    dir = 2;
                 }
                 else
                 {
                     x = EnvironmentManager.Instance.widthSize - 1;
+                    dir = 6;
                 }
             }
             else
@@ -79,15 +81,17 @@ public class GameplayManager : MonoBehaviour
                 if (0.5f.ChanceToBool())
                 {
                     y = 0;
+                    dir = 0;
                 }
                 else
                 {
                     y = EnvironmentManager.Instance.heightSize - 1;
+                    dir = 4;
                 }
             }
         } while (!EnvironmentManager.Instance.IsBlockIndexEmpty(x, y));
         
         RootBlock newRoot = (RootBlock)EnvironmentManager.Instance.CreateBlockAtIndex(BlockType.Root, x, y);
-        newRoot.SetData(null, null, true);
+        newRoot.SetData(null, null, dir, true);
     }
 }

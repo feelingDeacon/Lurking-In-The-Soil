@@ -11,10 +11,13 @@ public abstract class Block : MonoBehaviour
 {
     public SpriteRenderer renderer;
     public BlockType blockType;
+    public int x;
+    public int y;
 
-    public virtual void InitBlock()
+    public virtual void InitBlock(int xPos, int yPos)
     {
-        
+        x = xPos;
+        y = yPos;
     }
     
     public virtual void UpdateBlock()
