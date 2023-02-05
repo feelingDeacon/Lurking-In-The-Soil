@@ -1,7 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
+using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UIElements;
 using Random = UnityEngine.Random;
 
 public class GameplayManager : MonoBehaviour
@@ -28,6 +32,7 @@ public class GameplayManager : MonoBehaviour
     {
         ObjectPool.Instance.CacheAllObjects();
         EnvironmentManager.Instance.Init();
+        UpgradeManager.Instance.Init();
         InitGameplay();
     }
     
@@ -38,11 +43,12 @@ public class GameplayManager : MonoBehaviour
             EnvironmentManager.Instance.UpdateManager();
             PlayerRuntime.Instance.UpdatePlayer();
             UpdateGameplay();
+            UpgradeManager.Instance.UpdateManager();
         
-            if (Input.GetKeyDown(KeyCode.R))
-            {
-                CreateNewRoot();
-            }
+            // if (Input.GetKeyDown(KeyCode.R))
+            // {
+            //     CreateNewRoot();
+            // }
         }
     }
 
@@ -50,23 +56,55 @@ public class GameplayManager : MonoBehaviour
     {
         PlayerRuntime.Instance.FixedUpdatePlayer();
     }
+
+    public float gameStartTime;
     
     public void InitGameplay()
     {
         CreateNexus();
         NexusHealth = GameConstants.NexusMaxHealth;
+        nexusHealthBar.Init(GameConstants.NexusMaxHealth, NexusHealth);
+        RootAmount = 10000;
         gameEnd = false;
+        loseGameText.alpha = 0;
+        loseGameText.gameObject.SetActive(false);
+        gameStartTime = Time.time;
     }
-
+    
     public void UpdateGameplay()
     {
-        
+        if (!gameEnd)
+        {
+            TrySpawnRoot();
+        }
     }
+
 
     public void LoseGame()
     {
-        
+        nexus.gameObject.SetActive(false);
+        nexusExplodePS.Play();
+        loseGameText.gameObject.SetActive(true);
+        loseGameText.DOColor(Color.white, 3).OnComplete(() =>
+        {
+            menuButton.DOMove(menuButtonPos.position, 0.75f).SetEase(Ease.OutBack);
+        });
     }
+
+    public void ClickMenuButton()
+    {
+        SceneManager.LoadScene("MenuScene");
+    }
+
+    public Transform nexus;
+    public HealthBar nexusHealthBar;
+    public ParticleSystem nexusExplodePS;
+
+    private int rootAmount;
+    public TextMeshProUGUI loseGameText;
+    public TextMeshProUGUI rootCountText;
+    public Transform menuButton;
+    public Transform menuButtonPos;
 
     public int NexusHealth
     {
@@ -88,6 +126,16 @@ public class GameplayManager : MonoBehaviour
         }
     }
 
+    public int RootAmount
+    {
+        get => rootAmount;
+        set
+        {
+            rootAmount = value;
+            rootCountText.text = rootAmount.ToString();
+        }
+    }
+
     public void CreateNexus()
     {
         int nexusHalfWidth = 5;
@@ -105,10 +153,12 @@ public class GameplayManager : MonoBehaviour
             }
         }
     }
-
+    
     public void DamageNexus()
     {
-        
+        nexus.DOKill();
+        nexus.DOShakePosition(0.3f);
+        nexusHealthBar.UpdateHealthBar(_nexusHealth);
     }
 
     public void CreateNewRoot()
@@ -157,5 +207,24 @@ public class GameplayManager : MonoBehaviour
         newRoot.SetData(null, dir, 1, Random.Range(0, 360), 
             Random.Range(1f, 2f), Random.Range(10f, 20f), 
             0, 0, true, true);
+    }
+
+    private float _nextSpawnRootTime;
+    public float currCooldownDuration;
+
+    private void ResetSpawnRootCooldown()
+    {
+        currCooldownDuration = Mathf.Lerp(GameConstants.StartSpawnRootCooldown, GameConstants.ThreeMinuteSpawnRootCooldown, 
+            (Time.time - gameStartTime) / 180);
+        _nextSpawnRootTime = Time.time + currCooldownDuration;
+    }
+    
+    public void TrySpawnRoot()
+    {
+        if (_nextSpawnRootTime <= Time.time)
+        {
+            ResetSpawnRootCooldown();
+            CreateNewRoot();
+        }
     }
 }

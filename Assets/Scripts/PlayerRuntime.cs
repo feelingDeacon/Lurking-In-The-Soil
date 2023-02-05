@@ -4,14 +4,18 @@ using UnityEngine;
 
 public class PlayerRuntime : MonoBehaviour
 {
-    public float moveSpeed = 5;
-    public float attackRadius = 2.5f;
-    public int attackDamage = 1;
+    public float baseMoveSpeed = 25;
+    public float baseAttackRadius = 2.5f;
+    public int baseAttackDamage = 1;
     public Rigidbody2D rb;
     public Animator animator;
     public bool isAttacking;
     public bool _attacked;
     public Vector3 playerAttackDir;
+
+    public float CurrMoveSpeed => baseMoveSpeed + UpgradeManager.Instance.extraWalkSpeed;
+    public float CurrAttackRadius => baseAttackRadius + UpgradeManager.Instance.extraAttackRange;
+    public int CurrAttackDamage => baseAttackDamage + UpgradeManager.Instance.extraAttackDamage;
     
     private static PlayerRuntime _instance;
 
@@ -81,18 +85,27 @@ public class PlayerRuntime : MonoBehaviour
         }
     }
 
+    public ParticleSystem attackPS;
+    
     public void Attack()
     {
         if (_attacked) return;
 
         _attacked = true;
-        Collider2D[] hitTargets = Physics2D.OverlapCircleAll(transform.position + playerAttackDir * 3,
-            attackRadius, 1 << 13);
+        Vector2 attackCenter = transform.position + playerAttackDir * 3;
+        Collider2D[] hitTargets = Physics2D.OverlapCircleAll(attackCenter,
+            CurrAttackRadius, 1 << 13);
         foreach (var hitTarget in hitTargets)
         {
             RootBlock root = hitTarget.GetComponent<RootBlock>();
-            root.GetHurt(attackDamage);
+            root.GetHurt(CurrAttackDamage);
         }
+
+        attackPS.transform.position = attackCenter;
+        attackPS.transform.localScale = new Vector3(CurrAttackRadius, CurrAttackRadius, CurrAttackRadius);
+        attackPS.transform.right = (playerAttackDir).normalized;
+        attackPS.Play();
+        // Debug.Log("SSSS " + attackCenter + ", " + CurrAttackRadius + ", " + playerAttackDir);
     }
     
     public void AttackEnd()
@@ -104,7 +117,7 @@ public class PlayerRuntime : MonoBehaviour
     {
         if (movement.magnitude != 0)
         {
-            rb.MovePosition(rb.position + movement.normalized * moveSpeed * Time.fixedDeltaTime);
+            rb.MovePosition(rb.position + movement.normalized * CurrMoveSpeed * Time.fixedDeltaTime);
         }
     }
 }

@@ -8,6 +8,7 @@ public class RootBlock : Block
 {
     public int maxHealth;
     public int attackDamage;
+    public float attackCooldown;
     public float minExtendInterval;
     public float maxExtendInterval;
     public float sinLength;
@@ -32,6 +33,8 @@ public class RootBlock : Block
     public bool willBranch;
     public bool willThicken;
     public float currScale;
+    public float nextAttackTime;
+    public bool isNextToNexus;
 
     public bool IsDead => CurrHealth <= 0;
 
@@ -65,6 +68,8 @@ public class RootBlock : Block
         willBranch = false;
         willThicken = false;
         currScale = 1;
+        nextAttackTime = Time.time + attackCooldown;
+        isNextToNexus = EnvironmentManager.Instance.HasSurroundBlockMatchType(BlockType.Nexus, x, y);
         UpdateColor();
         UpdateScale();
     }
@@ -112,7 +117,13 @@ public class RootBlock : Block
 
     public override void UpdateBlock()
     {
-        if (!TryAttack())
+        bool hasAttacked = false;
+        if (nextAttackTime <= Time.time)
+        {
+            hasAttacked = TryAttack();
+        }
+        
+        if (!hasAttacked)
         {
             if (nextExtendTime <= Time.time)
             {
@@ -171,6 +182,8 @@ public class RootBlock : Block
             children[i].RemoveParent();
         }
         children.Clear();
+
+        GameplayManager.Instance.RootAmount++;
         
         base.DestroyBlock();
     }
@@ -324,9 +337,8 @@ public class RootBlock : Block
 
     private void UpdateColor()
     {
-        var rendererColor = renderer.color;
-        rendererColor.a = (float)CurrHealth / currMaxHealth;
-        renderer.color = rendererColor;
+        float val = (float)CurrHealth / currMaxHealth;
+        renderer.color = new Color(val, val, val, 1);
     }
 
     private void UpdateScale()
@@ -344,8 +356,9 @@ public class RootBlock : Block
 
     private bool TryAttack()
     {
-        if (EnvironmentManager.Instance.HasSurroundBlockMatchType(BlockType.Nexus, x, y))
+        if (isNextToNexus)
         {
+            nextAttackTime = Time.time + attackCooldown;
             GameplayManager.Instance.NexusHealth -= (int)(attackDamage * currScale);
             return true;
         }
