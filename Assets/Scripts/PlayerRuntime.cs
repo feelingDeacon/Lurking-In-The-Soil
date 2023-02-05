@@ -86,11 +86,15 @@ public class PlayerRuntime : MonoBehaviour
     }
 
     public ParticleSystem attackPS;
+    public AudioClip attackSFX;
+    public AudioClip hitSFX;
+    public AudioSource audioSource;
     
     public void Attack()
     {
         if (_attacked) return;
 
+        audioSource.PlayOneShot(attackSFX);
         _attacked = true;
         Vector2 attackCenter = transform.position + playerAttackDir * 3;
         Collider2D[] hitTargets = Physics2D.OverlapCircleAll(attackCenter,
@@ -99,6 +103,11 @@ public class PlayerRuntime : MonoBehaviour
         {
             RootBlock root = hitTarget.GetComponent<RootBlock>();
             root.GetHurt(CurrAttackDamage);
+        }
+
+        if (hitTargets.Length > 0)
+        {
+            audioSource.PlayOneShot(hitSFX);
         }
 
         attackPS.transform.position = attackCenter;

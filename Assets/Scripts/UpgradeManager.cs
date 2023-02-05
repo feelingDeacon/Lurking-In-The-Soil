@@ -82,12 +82,15 @@ public class UpgradeManager : MonoBehaviour
         Time.timeScale = 0;
     }
 
+    public AudioClip upgradeSFX;
+
     public void AfterClickUpgrade()
     {
         upgradeUI.gameObject.SetActive(false);
         Time.timeScale = 1;
         GameplayManager.Instance.RootAmount -= CurrUpgradePrice;
         upgradedAmount++;
+        PlayerRuntime.Instance.audioSource.PlayOneShot(upgradeSFX);
         UpdatePriceText();
     }
 

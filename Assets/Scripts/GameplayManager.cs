@@ -64,7 +64,7 @@ public class GameplayManager : MonoBehaviour
         CreateNexus();
         NexusHealth = GameConstants.NexusMaxHealth;
         nexusHealthBar.Init(GameConstants.NexusMaxHealth, NexusHealth);
-        RootAmount = 10000;
+        RootAmount = 0;
         gameEnd = false;
         loseGameText.alpha = 0;
         loseGameText.gameObject.SetActive(false);
