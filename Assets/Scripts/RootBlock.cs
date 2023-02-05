@@ -170,8 +170,13 @@ public class RootBlock : Block
         children.Remove(child);
     }
 
+    public ParticleSystem destroyPS;
+    
     public override void DestroyBlock()
     {
+        destroyPS.transform.SetParent(null);
+        destroyPS.transform.position = transform.position;
+        destroyPS.Play();
         if (parent)
         {
             parent.RemoveChild(this);
